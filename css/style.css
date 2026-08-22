@@ -1,0 +1,1520 @@
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: #070612;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   START LOGIN / REGISTER
+   ========================================================= */
+
+.hero {
+  background-image:
+    linear-gradient(
+      to top,
+      #070612 0%,
+      rgba(7, 6, 18, 0.35) 45%,
+      rgba(7, 6, 18, 0.1) 100%
+    ),
+    url("../images/register-login/hero-bg.png");
+
+  background-size: cover;
+  background-position: center 20%;
+  background-repeat: no-repeat;
+}
+
+.hero-glow {
+  background:
+    radial-gradient(
+      60% 55% at 20% 15%,
+      rgba(168, 85, 247, 0.45) 0%,
+      rgba(168, 85, 247, 0) 60%
+    ),
+    radial-gradient(
+      50% 50% at 80% 10%,
+      rgba(176, 38, 255, 0.4) 0%,
+      rgba(176, 38, 255, 0) 60%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(7, 6, 18, 0.1) 0%,
+      rgba(13, 11, 26, 0.35) 55%,
+      rgba(7, 6, 18, 0.92) 100%
+    ),
+    url("../images/register-login/hero-bg.png");
+
+  background-size: cover;
+  background-position: center 20%;
+  background-repeat: no-repeat;
+}
+
+.gradient-text,
+.glow-text {
+  background: linear-gradient(90deg, #7c2cff, #b026ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.field {
+  background: #111022;
+  border: 1px solid #26223d;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.field:focus-within {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+}
+
+.field input::placeholder {
+  color: #a5a1b5;
+  opacity: 0.7;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #7c2cff, #b026ff);
+
+  box-shadow: 0 10px 30px -10px rgba(176, 38, 255, 0.55);
+
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+
+  box-shadow: 0 14px 34px -10px rgba(176, 38, 255, 0.7);
+}
+
+input[type="checkbox"] {
+  accent-color: #a855f7;
+}
+
+.social-btn {
+  background: #111022;
+  border: 1px solid #26223d;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.15s ease;
+}
+
+.social-btn:hover {
+  border-color: #a855f7;
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   END LOGIN / REGISTER
+   ========================================================= */
+
+/* =========================================================
+   START TOP PLAYERS
+   ========================================================= */
+
+.top-players-hero {
+  position: relative;
+
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgba(7, 6, 18, 0.08) 0%,
+      rgba(7, 6, 18, 0.4) 55%,
+      #070612 100%
+    ),
+    url("../images/top-players/hero-top.jpeg");
+
+  background-size: cover;
+  background-position: center 10%;
+  background-repeat: no-repeat;
+}
+
+.card-glow {
+  box-shadow:
+    0 0 0 1px #26223d,
+    0 20px 45px -20px rgba(176, 38, 255, 0.45);
+}
+
+/* =========================================================
+   PLAYER AVATAR
+   ========================================================= */
+
+.player-avatar {
+  box-shadow:
+    0 0 0 3px #070612,
+    0 0 0 4px #a855f7,
+    0 0 22px 3px rgba(168, 85, 247, 0.45);
+}
+
+.player-avatar-gold {
+  box-shadow:
+    0 0 0 3px #070612,
+    0 0 0 5px #facc15,
+    0 0 35px 6px rgba(250, 204, 21, 0.65);
+}
+
+/* Compatibility with old class names */
+
+.avatar-ring {
+  box-shadow:
+    0 0 0 3px #070612,
+    0 0 0 5px #a855f7,
+    0 0 30px 4px rgba(168, 85, 247, 0.55);
+}
+
+.avatar-ring-gold {
+  box-shadow:
+    0 0 0 3px #070612,
+    0 0 0 5px #facc15,
+    0 0 35px 6px rgba(250, 204, 21, 0.6);
+}
+
+/* =========================================================
+   PODIUM GOLD
+   ========================================================= */
+
+.podium-gold {
+  background: linear-gradient(
+    180deg,
+    #facc15 0%,
+    #f0ae2d 45%,
+    rgba(240, 174, 45, 0.25) 100%
+  );
+
+  border: 1px solid rgba(250, 204, 21, 0.7);
+
+  box-shadow:
+    0 -14px 34px -12px rgba(250, 204, 21, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* =========================================================
+   PODIUM SILVER
+   ========================================================= */
+
+.podium-silver {
+  background: linear-gradient(
+    180deg,
+    #f5f3ff 0%,
+    #c9c3d6 45%,
+    rgba(201, 195, 214, 0.15) 100%
+  );
+
+  border: 1px solid rgba(245, 243, 255, 0.6);
+
+  box-shadow:
+    0 -12px 28px -12px rgba(245, 243, 255, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* =========================================================
+   PODIUM BRONZE
+   ========================================================= */
+
+.podium-bronze {
+  background: linear-gradient(
+    180deg,
+    #c97a3d 0%,
+    #7f4914 45%,
+    rgba(201, 122, 61, 0.15) 100%
+  );
+
+  border: 1px solid rgba(201, 122, 61, 0.6);
+
+  box-shadow:
+    0 -12px 28px -12px rgba(201, 122, 61, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Old class compatibility */
+
+.podium-base-gold {
+  background: linear-gradient(
+    180deg,
+    #facc15 0%,
+    #f0ae2d 45%,
+    rgba(240, 174, 45, 0.25) 100%
+  );
+
+  border: 1px solid rgba(250, 204, 21, 0.7);
+
+  box-shadow:
+    0 -14px 34px -12px rgba(250, 204, 21, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.podium-base-silver {
+  background: linear-gradient(
+    180deg,
+    #f5f3ff 0%,
+    #c9c3d6 45%,
+    rgba(201, 195, 214, 0.15) 100%
+  );
+
+  border: 1px solid rgba(245, 243, 255, 0.6);
+
+  box-shadow:
+    0 -12px 28px -12px rgba(245, 243, 255, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.podium-base-bronze {
+  background: linear-gradient(
+    180deg,
+    #c97a3d 0%,
+    #7f4914 45%,
+    rgba(201, 122, 61, 0.15) 100%
+  );
+
+  border: 1px solid rgba(201, 122, 61, 0.6);
+
+  box-shadow:
+    0 -12px 28px -12px rgba(201, 122, 61, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* =========================================================
+   TOP PLAYER ANIMATION
+   ========================================================= */
+
+.tab-btn {
+  transition: all 0.25s ease;
+}
+
+.player-row-fade {
+  animation: rowFade 0.4s ease both;
+}
+
+.row-fade {
+  animation: rowFade 0.4s ease both;
+}
+
+@keyframes rowFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   TOP PLAYER SCROLLBAR
+   ========================================================= */
+
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #0d0b1a;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #4c1d95;
+  border-radius: 999px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #7c2cff;
+}
+
+.modal-backdrop {
+  backdrop-filter: blur(6px);
+}
+
+/* =========================================================
+   START PAYMENT
+   ========================================================= */
+
+.payment-page {
+  min-height: 100vh;
+
+  background:
+    radial-gradient(circle at 15% 0%, rgba(124, 44, 255, 0.1), transparent 45%),
+    radial-gradient(
+      circle at 85% 100%,
+      rgba(176, 38, 255, 0.08),
+      transparent 45%
+    );
+}
+
+.payment-grid {
+  align-items: start;
+}
+
+.method-option {
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.method-option:hover {
+  border-color: #4c1d95;
+}
+
+.method-option.selected {
+  border-color: #7c2cff;
+  background: rgba(124, 44, 255, 0.06);
+
+  box-shadow:
+    0 0 0 1px rgba(124, 44, 255, 0.15),
+    0 0 24px rgba(124, 44, 255, 0.12);
+}
+
+.radio-dot {
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.radio-dot::after {
+  content: none;
+}
+
+.method-option.selected .radio-dot {
+  border-color: #a855f7;
+}
+
+.method-option.selected .radio-dot::after {
+  content: "";
+
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background: #a855f7;
+
+  box-shadow: 0 0 8px #b026ff;
+}
+
+/* =========================================================
+   CARD BRANDS
+   ========================================================= */
+
+.mc {
+  position: relative;
+  background: #151515;
+}
+
+.mc::before {
+  content: "";
+
+  display: block;
+
+  width: 20px;
+  height: 20px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(circle at 35% 50%, #eb001b 0 45%, transparent 46%),
+    radial-gradient(circle at 65% 50%, #f79e1b 0 45%, transparent 46%);
+
+  opacity: 0.9;
+}
+
+.mc-logo {
+  position: relative;
+  background: #151515;
+}
+
+.mc-logo::before,
+.mc-logo::after {
+  content: "";
+
+  position: absolute;
+
+  width: 18px;
+  height: 18px;
+
+  border-radius: 50%;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+}
+
+.mc-logo::before {
+  left: 11px;
+  background: #eb001b;
+}
+
+.mc-logo::after {
+  right: 11px;
+  background: #f79e1b;
+}
+
+/* =========================================================
+   PAYMENT INPUTS
+   ========================================================= */
+
+.payment-input {
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.payment-input:focus {
+  border-color: #6d28d9;
+
+  box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.25);
+}
+
+.payment-input.input-error {
+  border-color: #ef4444 !important;
+
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
+}
+
+.payment-input.input-valid {
+  border-color: #22c55e !important;
+
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+}
+
+#cardNumber.border-danger,
+#cardName.border-danger,
+#expiry.border-danger,
+#cvv.border-danger {
+  border-color: #ef4444 !important;
+
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
+}
+
+#cardNumber.border-success,
+#cardName.border-success,
+#expiry.border-success,
+#cvv.border-success {
+  border-color: #22c55e !important;
+}
+
+/* =========================================================
+   PAYMENT ERRORS
+   ========================================================= */
+
+.error-msg {
+  display: none;
+}
+
+.error-msg.show {
+  display: block;
+}
+
+.field-error {
+  display: none;
+}
+
+.field-error.show {
+  display: block;
+}
+
+/* =========================================================
+   ALTERNATIVE INFO
+   ========================================================= */
+
+.alt-info {
+  display: none;
+}
+
+.alt-info.show {
+  display: flex;
+}
+
+/* =========================================================
+   PAYMENT BUTTON
+   ========================================================= */
+
+.pay-btn {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.pay-btn:hover {
+  transform: translateY(-1px);
+
+  box-shadow: 0 10px 36px rgba(176, 38, 255, 0.55);
+}
+
+.pay-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+
+  transform: none !important;
+
+  box-shadow: none;
+}
+
+/* =========================================================
+   PAYMENT SPINNER
+   ========================================================= */
+
+.spinner,
+.payment-spinner {
+  display: none;
+
+  width: 18px;
+  height: 18px;
+
+  border-radius: 50%;
+
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+
+  animation: spin 0.7s linear infinite;
+}
+
+.spinner.show,
+.payment-spinner.show {
+  display: inline-block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   ORDER ITEMS
+   ========================================================= */
+
+#orderItems {
+  min-width: 0;
+}
+
+.order-item {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 12px;
+
+  background: #0f0d1a;
+
+  border: 1px solid #26223d;
+
+  border-radius: 12px;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.order-item:hover {
+  border-color: #4c1d95;
+  background: #111022;
+}
+
+.order-item-image {
+  width: 52px;
+  height: 52px;
+
+  flex-shrink: 0;
+
+  object-fit: cover;
+
+  border-radius: 9px;
+
+  border: 1px solid #26223d;
+}
+
+.order-item-title {
+  min-width: 0;
+
+  color: #f5f3ff;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.order-item-info {
+  min-width: 0;
+}
+
+.order-item-price {
+  color: #a855f7;
+
+  font-family: "Rajdhani", sans-serif;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.order-item-qty {
+  color: #a5a1b5;
+  font-size: 12px;
+}
+
+/* =========================================================
+   EMPTY ORDER
+   ========================================================= */
+
+#emptyOrderMessage {
+  display: none;
+}
+
+#emptyOrderMessage.show {
+  display: block;
+}
+
+/* =========================================================
+   PAYMENT TOAST
+   ========================================================= */
+
+.toast {
+  position: fixed;
+
+  top: 24px;
+  left: 50%;
+
+  transform: translateX(-50%) translateY(-20px);
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+
+  z-index: 9999;
+}
+
+.toast.show {
+  opacity: 1;
+
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast.toast-success {
+  border-color: #22c55e;
+}
+
+.toast.toast-success span:first-child {
+  background: #22c55e;
+}
+
+.toast.toast-error {
+  border-color: #ef4444;
+}
+
+.toast.toast-error span:first-child {
+  background: #ef4444;
+}
+
+/* =========================================================
+   SAVE CARD
+   ========================================================= */
+
+#saveCardBox {
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+#saveCardBox:hover {
+  transform: scale(1.05);
+}
+
+/* =========================================================
+   PAYMENT SUMMARY
+   ========================================================= */
+
+#subtotal,
+#discount,
+#tax,
+#total {
+  transition: opacity 0.2s ease;
+}
+
+#total {
+  white-space: nowrap;
+}
+
+/* =========================================================
+   PAYMENT SUCCESS
+   ========================================================= */
+
+.payment-success {
+  animation: paymentSuccess 0.35s ease both;
+}
+
+@keyframes paymentSuccess {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   PAYMENT RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+  .payment-grid {
+    grid-template-columns: 1fr 1.2fr !important;
+  }
+
+  .payment-grid > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 980px) {
+  .payment-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .payment-grid > :last-child {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .payment-wrap {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .payment-title {
+    font-size: 34px !important;
+  }
+
+  .payment-field-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .card-brands {
+    flex-wrap: wrap;
+  }
+
+  .order-item {
+    align-items: flex-start;
+  }
+
+  .order-item-image {
+    width: 46px;
+    height: 46px;
+  }
+
+  #total {
+    font-size: 24px;
+  }
+}
+
+/* =========================================================
+   END PAYMENT
+   ========================================================= */
+
+/* =========================================================
+   START CART
+   ========================================================= */
+
+.cart-page {
+  min-height: 100vh;
+
+  background:
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(124, 44, 255, 0.08),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 85% 100%,
+      rgba(176, 38, 255, 0.06),
+      transparent 45%
+    );
+}
+
+#cart-items {
+  min-width: 0;
+}
+
+.cart-item {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 14px;
+
+  background: #0f0d1a;
+
+  border: 1px solid #26223d;
+
+  border-radius: 12px;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.15s ease;
+}
+
+.cart-item:hover {
+  border-color: #4c1d95;
+  background: #111022;
+
+  transform: translateY(-1px);
+}
+
+.cart-item-image {
+  width: 68px;
+  height: 68px;
+
+  flex-shrink: 0;
+
+  object-fit: cover;
+
+  border-radius: 10px;
+
+  border: 1px solid #26223d;
+}
+
+.cart-item-info {
+  min-width: 0;
+}
+
+.cart-item-title {
+  color: #f5f3ff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cart-item-publisher {
+  color: #6b687a;
+
+  font-size: 12px;
+
+  margin-top: 3px;
+}
+
+.cart-item-price {
+  color: #f5f3ff;
+
+  font-family: "Rajdhani", sans-serif;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   QUANTITY
+   ========================================================= */
+
+.quantity-control {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 5px 10px;
+
+  background: #15121f;
+
+  border: 1px solid #26223d;
+
+  border-radius: 8px;
+}
+
+.qty-btn {
+  width: 20px;
+  height: 24px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #a5a1b5;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.qty-btn:hover {
+  color: #a855f7;
+  transform: scale(1.1);
+}
+
+.qty-value {
+  width: 20px;
+
+  text-align: center;
+
+  color: #f5f3ff;
+
+  font-family: "Rajdhani", sans-serif;
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   CART REMOVE
+   ========================================================= */
+
+.cart-remove-btn {
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.cart-remove-btn:hover {
+  color: #ef4444;
+  transform: scale(1.08);
+}
+
+/* =========================================================
+   CART EMPTY
+   ========================================================= */
+
+.cart-empty {
+  text-align: center;
+
+  padding: 48px 20px;
+
+  color: #6b687a;
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   CHECKOUT
+   ========================================================= */
+
+#checkout-btn {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+#checkout-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+
+  box-shadow: 0 10px 36px rgba(176, 38, 255, 0.55);
+}
+
+#checkout-btn:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+
+  transform: none !important;
+
+  box-shadow: none;
+}
+
+/* =========================================================
+   CART SUMMARY
+   ========================================================= */
+
+#subtotal,
+#discount,
+#tax,
+#total {
+  transition: opacity 0.2s ease;
+}
+
+#total {
+  white-space: nowrap;
+}
+
+/* =========================================================
+   CART RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .cart-item {
+    flex-wrap: wrap;
+  }
+
+  .cart-item-info {
+    flex: 1;
+  }
+
+  .cart-item-actions {
+    width: 100%;
+
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 600px) {
+  .cart-item {
+    padding: 12px;
+  }
+
+  .cart-item-image {
+    width: 55px;
+    height: 55px;
+  }
+
+  .cart-item-title {
+    font-size: 13px;
+  }
+
+  .cart-item-actions {
+    gap: 8px;
+  }
+
+  .quantity-control {
+    gap: 7px;
+  }
+}
+
+/* =========================================================
+   END CART
+   ========================================================= */
+
+/* =========================================================
+   START GAME ROW
+   ========================================================= */
+
+.game-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    65px
+    55px;
+
+  align-items: center;
+
+  padding: 12px;
+
+  border-bottom: 1px solid #26223d;
+
+  transition: background 0.2s ease;
+}
+
+.game-cell {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  min-width: 0;
+}
+
+.game-cover {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  border: 1px solid #26223d;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.game-name {
+  font-size: 13px;
+
+  color: #f5f3ff;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.game-price {
+  font-size: 13px;
+
+  color: #a5a1b5;
+
+  font-family: "Rajdhani", sans-serif;
+
+  font-weight: 600;
+}
+
+.game-category {
+  font-size: 13px;
+
+  color: #a5a1b5;
+}
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.status-badge {
+  font-size: 12px;
+
+  font-weight: 500;
+
+  padding: 5px 12px;
+
+  border-radius: 999px;
+
+  border: none;
+
+  cursor: pointer;
+
+  font-family: "Poppins", sans-serif;
+
+  transition: filter 0.2s ease;
+}
+
+.status-badge:hover {
+  filter: brightness(1.15);
+}
+
+.status-active {
+  background: rgba(34, 197, 94, 0.12);
+
+  color: #22c55e;
+}
+
+.status-inactive {
+  background: rgba(239, 68, 68, 0.12);
+
+  color: #ef4444;
+}
+
+.status-pending {
+  background: rgba(250, 204, 21, 0.12);
+
+  color: #facc15;
+}
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+}
+
+.icon-btn {
+  background: none;
+
+  border: none;
+
+  cursor: pointer;
+
+  color: #6b687a;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  transition: color 0.2s ease;
+}
+
+.icon-btn.edit:hover {
+  color: #a855f7;
+}
+
+.icon-btn.delete:hover {
+  color: #ef4444;
+}
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty-state {
+  text-align: center;
+
+  padding: 48px 20px;
+
+  color: #6b687a;
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   INVALID INPUT
+   ========================================================= */
+
+.field input.invalid {
+  border-color: #ef4444;
+
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.field-error.show {
+  display: block;
+}
+
+/* =========================================================
+   END GAME ROW
+   ========================================================= */
+
+/* =========================================================
+   START MANAGE ORDERS
+   ========================================================= */
+
+.order-row {
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.order-row:hover {
+  background-color: rgba(13, 11, 26, 0.6);
+}
+
+.player-cell {
+  min-width: 0;
+}
+
+.player-name {
+  min-width: 0;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+.order-avatar {
+  width: 36px;
+  height: 36px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9999px;
+
+  font-family: "Rajdhani", sans-serif;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+.order-id {
+  white-space: nowrap;
+}
+
+.order-action {
+  background: transparent;
+
+  border: none;
+
+  padding: 0;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: flex-end;
+
+  color: #6b687a;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.order-action:hover {
+  color: #a855f7;
+
+  transform: scale(1.08);
+}
+
+.order-action.delete:hover {
+  color: #ef4444;
+}
+
+/* =========================================================
+   ORDERS PAGINATION
+   ========================================================= */
+
+.pagination-arrow {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: #111022;
+
+  border: 1px solid #26223d;
+
+  color: #a5a1b5;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.pagination-arrow:hover {
+  border-color: #a855f7;
+
+  color: #a855f7;
+}
+
+.pagination-arrow:disabled {
+  opacity: 0.4;
+
+  cursor: not-allowed;
+}
+
+.pagination-arrow:disabled:hover {
+  border-color: #26223d;
+
+  color: #a5a1b5;
+}
+
+.page-number {
+  min-width: 30px;
+  height: 30px;
+
+  padding: 0 8px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: transparent;
+
+  border: none;
+
+  color: #a5a1b5;
+
+  font-family: "Rajdhani", sans-serif;
+
+  font-weight: 600;
+
+  font-size: 13px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.page-number:hover {
+  color: #f5f3ff;
+}
+
+.page-number.active {
+  background: linear-gradient(90deg, #7c2cff, #b026ff);
+
+  color: #fff;
+
+  box-shadow: 0 4px 14px -4px rgba(176, 38, 255, 0.6);
+}
+
+/* =========================================================
+   END MANAGE ORDERS
+   ========================================================= */
+
+/* =========================================================
+   TOP PLAYERS RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .top-players-hero {
+    background-position: center top;
+  }
+
+  .player-avatar {
+    box-shadow:
+      0 0 0 2px #070612,
+      0 0 0 3px #a855f7,
+      0 0 15px 2px rgba(168, 85, 247, 0.4);
+  }
+
+  .player-avatar-gold {
+    box-shadow:
+      0 0 0 2px #070612,
+      0 0 0 4px #facc15,
+      0 0 22px 3px rgba(250, 204, 21, 0.55);
+  }
+}

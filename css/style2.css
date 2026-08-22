@@ -1,0 +1,178 @@
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: #03040b;
+  color: #fff;
+}
+
+.heading {
+  font-family: "Rajdhani", sans-serif;
+}
+
+/* =========================================================
+   COMMON COMPONENTS
+========================================================= */
+
+.glass {
+  background: linear-gradient(
+    145deg,
+    rgba(13, 16, 32, 0.94),
+    rgba(5, 6, 14, 0.98)
+  );
+  border: 1px solid #24213a;
+}
+
+.neon {
+  border: 1px solid rgba(124, 44, 255, 0.65);
+  box-shadow: 0 0 15px rgba(124, 44, 255, 0.2);
+}
+
+.purple {
+  background: linear-gradient(135deg, #7c2cff, #a855f7);
+}
+
+.muted {
+  color: #9b9aad;
+}
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.page-btn.active {
+  background: #7c2cff;
+  box-shadow: 0 0 15px rgba(124, 44, 255, 0.35);
+  border-color: transparent;
+}
+
+/* =========================================================
+   STAR RATING
+========================================================= */
+
+.star-pick i {
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.star-pick i:hover {
+  transform: scale(1.15);
+}
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+#reviewModal,
+#detailsModal {
+  transition: opacity 0.2s ease;
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.profile-scene {
+  position: relative;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      ellipse at 80% 20%,
+      rgba(168, 85, 247, 0.25),
+      transparent 55%
+    ),
+    linear-gradient(120deg, #0a0714 0%, #140a2b 55%, #1c0e3a 100%);
+}
+
+.profile-scene .scene-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.avatar-ring {
+  box-shadow:
+    0 0 25px rgba(124, 44, 255, 0.55),
+    inset 0 0 25px rgba(124, 44, 255, 0.35);
+}
+
+.toast {
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.cover-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    180deg,
+    transparent 40%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+
+.cover-card i {
+  filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.5));
+}
+
+.cover-title {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  z-index: 1;
+
+  font-family: "Rajdhani", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* =========================================================
+   STATUS SELECT
+========================================================= */
+
+.status-select {
+  appearance: none;
+  -webkit-appearance: none;
+
+  cursor: pointer;
+  outline: none;
+
+  padding-right: 1.5rem;
+
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+
+  background-repeat: no-repeat;
+  background-position: right 0.4rem center;
+  background-size: 0.8em;
+}
+
+/* =========================================================
+   GAME DETAILS / THUMBNAILS
+========================================================= */
+
+.thumb-active {
+  border-color: #a855f7 !important;
+}
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.card {
+  background-color: #0d0e21;
+  border: 1px solid #1a1c38;
+}
