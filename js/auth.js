@@ -1,4 +1,3 @@
-
 // =========================================================
 // SHOW ERROR
 // =========================================================
@@ -80,7 +79,9 @@ function togglePw(id) {
 const registerForm = document.getElementById("registerForm");
 
 if (registerForm) {
-  registerForm.addEventListener("submit", function (e) {
+  registerForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
     let isValid = true;
 
     // -------------------------------------------------
@@ -102,11 +103,8 @@ if (registerForm) {
     // -------------------------------------------------
 
     removeError(username);
-
     removeError(email);
-
     removeError(password);
-
     removeError(confirmPassword);
 
     const oldTermsError = registerForm.querySelector(".terms-js-error");
@@ -235,11 +233,118 @@ if (registerForm) {
     }
 
     // =================================================
-    // FINAL REGISTER VALIDATION
+    // STOP IF FRONTEND VALIDATION FAILS
     // =================================================
 
     if (!isValid) {
-      e.preventDefault();
+      return;
+    }
+
+    // =================================================
+    // SEND DATA TO BACKEND
+    // =================================================
+
+    try {
+      const formData = new FormData(registerForm);
+
+      const response = await fetch("BACKEND/register.php", {
+        method: "POST",
+        body: formData,
+      });
+
+      // =================================================
+      // READ BACKEND RESPONSE
+      // =================================================
+
+      const data = await response.json();
+
+      // =================================================
+      // CLEAR BACKEND ERRORS
+      // =================================================
+
+      removeError(username);
+      removeError(email);
+      removeError(password);
+      removeError(confirmPassword);
+
+      const oldBackendTermsError =
+        registerForm.querySelector(".terms-js-error");
+
+      if (oldBackendTermsError) {
+        oldBackendTermsError.remove();
+      }
+
+      // =================================================
+      // BACKEND VALIDATION ERRORS
+      // =================================================
+
+      if (!data.success) {
+        if (data.errors) {
+          // -------------------------------------------------
+          // USERNAME ERROR
+          // -------------------------------------------------
+
+          if (data.errors.username) {
+            showError(username, data.errors.username);
+          }
+
+          // -------------------------------------------------
+          // EMAIL ERROR
+          // -------------------------------------------------
+
+          if (data.errors.email) {
+            showError(email, data.errors.email);
+          }
+
+          // -------------------------------------------------
+          // PASSWORD ERROR
+          // -------------------------------------------------
+
+          if (data.errors.password) {
+            showError(password, data.errors.password);
+          }
+
+          // -------------------------------------------------
+          // CONFIRM PASSWORD ERROR
+          // -------------------------------------------------
+
+          if (data.errors.confirm_password) {
+            showError(confirmPassword, data.errors.confirm_password);
+          }
+
+          // -------------------------------------------------
+          // TERMS ERROR
+          // -------------------------------------------------
+
+          if (data.errors.terms) {
+            const termsContainer = terms.closest("div");
+
+            const error = document.createElement("p");
+
+            error.className = "terms-js-error text-red-500 text-xs mt-1";
+
+            error.textContent = data.errors.terms;
+
+            if (termsContainer) {
+              termsContainer.appendChild(error);
+            }
+          }
+        }
+
+        return;
+      }
+
+      // =================================================
+      // REGISTER SUCCESS
+      // =================================================
+
+      if (data.success) {
+        window.location.href = "index.php";
+
+        return;
+      }
+    } catch (error) {
+      console.error("Register Error:", error);
     }
   });
 }
@@ -267,7 +372,6 @@ if (loginForm) {
     // -------------------------------------------------
 
     removeError(email);
-
     removeError(password);
 
     // =================================================

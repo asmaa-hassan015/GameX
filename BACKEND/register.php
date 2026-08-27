@@ -62,8 +62,7 @@ $email = trim(
     $_POST['email'] ?? ''
 );
 
-$password =
-    $_POST['password'] ?? '';
+$password = $_POST['password'] ?? '';
 
 $confirmPassword =
     $_POST['confirm_password'] ?? '';
@@ -160,23 +159,23 @@ if (!$terms) {
 if (empty($errors)) {
 
     $stmt = $pdo->prepare("
+
         SELECT
             username,
             email
+
         FROM users
+
         WHERE username = :username
            OR email = :email
+
         LIMIT 1
+
     ");
 
     $stmt->execute([
-
-        'username' =>
-        $username,
-
-        'email' =>
-        $email
-
+        'username' => $username,
+        'email' => $email
     ]);
 
     $existing =
@@ -246,6 +245,7 @@ $hashedPassword =
 try {
 
     $stmt = $pdo->prepare("
+
         INSERT INTO users
         (
             username,
@@ -255,6 +255,7 @@ try {
             terms_accepted,
             status
         )
+
         VALUES
         (
             :username,
@@ -264,6 +265,7 @@ try {
             :terms_accepted,
             'active'
         )
+
     ");
 
     $stmt->execute([
@@ -292,19 +294,42 @@ try {
 
 
     // =====================================================
+    // CREATE SESSION
+    // =====================================================
+
+    $_SESSION['user_id'] =
+        $userId;
+
+    $_SESSION['username'] =
+        $username;
+
+    $_SESSION['email'] =
+        $email;
+
+    $_SESSION['role'] =
+        'user';
+
+
+    // =====================================================
     // SUCCESS
     // =====================================================
 
     responseJson(
+
         true,
+
         'Account created successfully.',
+
         [
+
             'user_id' =>
             $userId,
 
             'redirect' =>
-            'Login.php'
+            '../index.php'
+
         ]
+
     );
 } catch (PDOException $e) {
 
@@ -318,15 +343,18 @@ try {
     // DUPLICATE DATABASE ERROR
     // =====================================================
 
-    if (
-        $e->getCode() === '23000'
-    ) {
+    if ($e->getCode() === '23000') {
 
         responseJson(
+
             false,
+
             'Username or email is already registered.',
+
             [],
+
             409
+
         );
     }
 
@@ -336,9 +364,14 @@ try {
     // =====================================================
 
     responseJson(
+
         false,
+
         'Registration failed. Please try again.',
+
         [],
+
         500
+
     );
 }
