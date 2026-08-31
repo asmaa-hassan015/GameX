@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   // =========================================================
   // API
@@ -11,9 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // =========================================================
 
   const playerName = document.getElementById("playerName");
+  const memberSinceEl = document.getElementById("memberSince");
   const playerAvatar = document.getElementById("playerAvatar");
   const defaultAvatar = document.getElementById("defaultAvatar");
-  const playerLevel = document.getElementById("playerLevel");
 
   const openEditProfile = document.getElementById("openEditProfile");
   const editModal = document.getElementById("editModal");
@@ -35,25 +34,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // STATS
   // =========================================================
 
+  const statOrders = document.getElementById("statOrders");
   const statGames = document.getElementById("statGames");
-  const statAchievements = document.getElementById("statAchievements");
-  const statHours = document.getElementById("statHours");
   const statWishlist = document.getElementById("statWishlist");
+  const statReviews = document.getElementById("statReviews");
 
   // =========================================================
-  // RECENTLY PLAYED
+  // RECENT PURCHASES
   // =========================================================
 
-  const gamesGrid = document.getElementById("gamesGrid");
-  const viewAllGames = document.getElementById("viewAllGames");
-
-  // =========================================================
-  // XP
-  // =========================================================
-
-  const xpNote = document.getElementById("xpNote");
-  const xpText = document.getElementById("xpText");
-  const xpBar = document.getElementById("xpBar");
+  const purchasesGrid = document.getElementById("purchasesGrid");
 
   // =========================================================
   // CURRENT USER
@@ -71,6 +61,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // =========================================================
 
   const DEFAULT_AVATAR = "src/Images/avatars/blaze.png";
+
+  // Mirrors the server's $allowedAvatars whitelist in
+  // BACKEND/player-profile.php. Used to tell a predefined
+  // avatar apart from a previously uploaded custom avatar.
+  const allowedAvatarPaths = [
+    "src/Images/avatars/blaze.png",
+    "src/Images/avatars/sentinel.png",
+    "src/Images/avatars/raven.png",
+    "src/Images/avatars/phantom.png",
+  ];
 
   // =========================================================
   // CURRENT AVATAR
@@ -91,12 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
     toast.textContent = message;
 
     toast.classList.remove("opacity-0", "pointer-events-none");
-
     toast.classList.add("opacity-100");
 
     setTimeout(() => {
       toast.classList.remove("opacity-100");
-
       toast.classList.add("opacity-0", "pointer-events-none");
     }, 3000);
   }
@@ -134,23 +132,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     path = String(path).trim();
 
-    // Full URL
     path = path.replace(/^https?:\/\/[^/]+\/GameX\//i, "");
-
-    // /GameX/
     path = path.replace(/^\/?GameX\//i, "");
-
-    // Leading slash
     path = path.replace(/^\/+/, "");
 
-    // Images normalization
     path = path.replace(/^src\/images\/avatars\//i, "src/Images/avatars/");
-
     path = path.replace(/^images\/avatars\//i, "src/Images/avatars/");
-
     path = path.replace(/^Images\/avatars\//i, "src/Images/avatars/");
 
-    // Filename only
     const allowedNames = [
       "blaze.png",
       "sentinel.png",
@@ -201,9 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!path) {
       playerAvatar.src = "";
       playerAvatar.classList.add("hidden");
-
       defaultAvatar.classList.remove("hidden");
-
       return;
     }
 
@@ -217,7 +204,6 @@ document.addEventListener("DOMContentLoaded", () => {
     playerAvatar.onerror = () => {
       playerAvatar.src = "";
       playerAvatar.classList.add("hidden");
-
       defaultAvatar.classList.remove("hidden");
     };
   }
@@ -245,12 +231,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     avatarPreview.src = getImageUrl(path) + "?t=" + Date.now();
-
     avatarPreview.classList.remove("hidden");
 
     if (avatarPreviewDefault) {
       avatarPreviewDefault.classList.add("hidden");
     }
+  }
+
+  // =========================================================
+  // NAME VALIDATION (letters only, no digits/symbols/HTML/JS)
+  // =========================================================
+
+  const NAME_ALLOWED_REGEX = /^\p{L}+(?:\s\p{L}+)*$/u;
+  const NAME_STRIP_REGEX = /[^\p{L}\s]/gu;
+
+  if (editName) {
+    editName.addEventListener("input", () => {
+      const cleaned = editName.value.replace(NAME_STRIP_REGEX, "");
+
+      if (cleaned !== editName.value) {
+        editName.value = cleaned;
+      }
+    });
   }
 
   // =========================================================
@@ -267,33 +269,24 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // File size
       const maxSize = 5 * 1024 * 1024;
 
       if (file.size > maxSize) {
         showAvatarError("Avatar must be smaller than 5MB.");
-
         editAvatar.value = "";
-
         return;
       }
 
-      // File type
       const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
       if (!allowedTypes.includes(file.type)) {
         showAvatarError("Only JPG, PNG or WEBP images are allowed.");
-
         editAvatar.value = "";
-
         return;
       }
 
-      // Custom image selected
-      // Do not send predefined avatar
       currentAvatarPath = "";
 
-      // Preview
       const reader = new FileReader();
 
       reader.onload = (event) => {
@@ -324,7 +317,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!path) {
       navbarAvatar.src = getImageUrl(DEFAULT_AVATAR);
-
       return;
     }
 
@@ -340,33 +332,41 @@ document.addEventListener("DOMContentLoaded", () => {
   // =========================================================
 
   function resetStats() {
-    if (statGames) {
-      statGames.textContent = "0";
-    }
+    if (statOrders) statOrders.textContent = "0";
+    if (statGames) statGames.textContent = "0";
+    if (statWishlist) statWishlist.textContent = "0";
+    if (statReviews) statReviews.textContent = "0";
+  }
 
-    if (statAchievements) {
-      statAchievements.textContent = "0";
-    }
+  // =========================================================
+  // FORMAT PRICE
+  // =========================================================
 
-    if (statHours) {
-      statHours.textContent = "0h";
-    }
+  function formatPrice(value) {
+    const num = Number(value || 0);
+    return "$" + num.toFixed(2);
+  }
 
-    if (statWishlist) {
-      statWishlist.textContent = "0";
-    }
+  // =========================================================
+  // STATUS BADGE
+  // =========================================================
 
-    if (xpText) {
-      xpText.textContent = "0 / 100 XP";
-    }
+  function statusBadge(status) {
+    const normalized = (status || "").toLowerCase();
 
-    if (xpNote) {
-      xpNote.textContent = "100 XP remaining";
-    }
+    const styles = {
+      completed: "bg-emerald-500/15 text-emerald-400",
+      processing: "bg-blue-500/15 text-blue-400",
+      pending: "bg-yellow-500/15 text-yellow-400",
+      cancelled: "bg-red-500/15 text-red-400",
+    };
 
-    if (xpBar) {
-      xpBar.style.width = "0%";
-    }
+    const cls = styles[normalized] || "bg-gray-500/15 text-gray-400";
+    const label = normalized
+      ? normalized.charAt(0).toUpperCase() + normalized.slice(1)
+      : "Unknown";
+
+    return `<span class="inline-block text-xs font-semibold px-3 py-1 rounded-full ${cls}">${label}</span>`;
   }
 
   // =========================================================
@@ -404,6 +404,16 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // =====================================================
+      // MEMBER SINCE
+      // =====================================================
+
+      if (memberSinceEl) {
+        memberSinceEl.textContent = user.memberSince
+          ? "Member since " + user.memberSince
+          : "";
+      }
+
+      // =====================================================
       // AVATAR
       // =====================================================
 
@@ -416,70 +426,25 @@ document.addEventListener("DOMContentLoaded", () => {
       updateNavbarAvatar(avatar);
 
       // =====================================================
-      // LEVEL
-      // =====================================================
-
-      const level = Number(user.level || 1);
-
-      if (playerLevel) {
-        playerLevel.textContent = level;
-      }
-
-      // =====================================================
       // STATS
       // =====================================================
 
       if (data.stats) {
-        if (statGames) {
-          statGames.textContent = Number(data.stats.games || 0);
-        }
-
-        if (statAchievements) {
-          statAchievements.textContent = Number(data.stats.achievements || 0);
-        }
-
-        if (statHours) {
-          statHours.textContent = Number(data.stats.hours || 0) + "h";
-        }
-
-        if (statWishlist) {
+        if (statOrders) statOrders.textContent = Number(data.stats.orders || 0);
+        if (statGames) statGames.textContent = Number(data.stats.games || 0);
+        if (statWishlist)
           statWishlist.textContent = Number(data.stats.wishlist || 0);
-        }
-
-        const currentXP = Number(data.stats.currentXP || 0);
-
-        const requiredXP = Number(data.stats.requiredXP || 100);
-
-        if (xpText) {
-          xpText.textContent = `${currentXP} / ${requiredXP} XP`;
-        }
-
-        if (xpNote) {
-          const remaining = Math.max(requiredXP - currentXP, 0);
-
-          xpNote.textContent = `${remaining} XP remaining`;
-        }
-
-        if (xpBar) {
-          let percentage = 0;
-
-          if (requiredXP > 0) {
-            percentage = (currentXP / requiredXP) * 100;
-          }
-
-          percentage = Math.min(Math.max(percentage, 0), 100);
-
-          xpBar.style.width = percentage + "%";
-        }
+        if (statReviews)
+          statReviews.textContent = Number(data.stats.reviews || 0);
       } else {
         resetStats();
       }
 
       // =====================================================
-      // RECENTLY PLAYED
+      // RECENT PURCHASES
       // =====================================================
 
-      renderRecentlyPlayed(data.recentlyPlayed || []);
+      renderRecentPurchases(data.recentPurchases || []);
     } catch (error) {
       console.error("Profile Load Error:", error);
 
@@ -492,41 +457,53 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // =========================================================
-  // RENDER RECENTLY PLAYED
+  // RENDER RECENT PURCHASES
   // =========================================================
 
-  function renderRecentlyPlayed(games) {
-    if (!gamesGrid) {
+  function renderRecentPurchases(purchases) {
+    if (!purchasesGrid) {
       return;
     }
 
-    gamesGrid.innerHTML = "";
+    purchasesGrid.innerHTML = "";
 
-    if (!Array.isArray(games) || games.length === 0) {
-      gamesGrid.innerHTML = `
+    if (!Array.isArray(purchases) || purchases.length === 0) {
+      purchasesGrid.innerHTML = `
         <div class="col-span-full text-center py-8 text-gray-500">
-          No recently played games.
+          No purchases yet.
         </div>
       `;
 
       return;
     }
 
-    games.slice(0, 4).forEach((game) => {
-      const title = game.title || game.name || "Unknown Game";
+    purchases.slice(0, 4).forEach((item) => {
+      const title = item.title || "Unknown Game";
+      const image = item.image || "";
+      const price = formatPrice(item.price);
+      const status = item.status || "";
 
-      const image = game.image || game.cover || "";
+      let dateLabel = "";
 
-      const hours = game.hours || 0;
+      if (item.purchasedAt) {
+        const purchasedDate = new Date(item.purchasedAt.replace(" ", "T"));
+
+        if (!isNaN(purchasedDate)) {
+          dateLabel = purchasedDate.toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          });
+        }
+      }
 
       const card = document.createElement("div");
 
       card.className =
-        "bg-[#0d0f1c] border border-[#24213a] rounded-xl overflow-hidden hover:border-[#7c2cff] transition";
+        "bg-[#0d0f1c] border border-[#24213a] rounded-xl overflow-hidden hover:border-[#7c2cff] transition p-4 flex gap-4";
 
       card.innerHTML = `
-        <div class="h-40 bg-[#17121f] overflow-hidden">
-
+        <div class="w-20 h-24 rounded-lg overflow-hidden bg-[#17121f] shrink-0">
           ${
             image
               ? `
@@ -538,28 +515,38 @@ document.addEventListener("DOMContentLoaded", () => {
               `
               : `
                 <div class="w-full h-full grid place-items-center">
-                  <i class="fa-solid fa-gamepad text-4xl text-[#7c2cff]"></i>
+                  <i class="fa-solid fa-gamepad text-2xl text-[#7c2cff]"></i>
                 </div>
               `
           }
-
         </div>
 
-        <div class="p-4">
-
+        <div class="flex-1 min-w-0">
           <h3 class="font-semibold truncate">
             ${escapeHTML(title)}
           </h3>
 
-          <p class="text-sm text-gray-500 mt-2">
-            ${Number(hours)}
-            hours played
+          <p class="text-[#a855f7] font-semibold mt-1">
+            ${escapeHTML(price)}
           </p>
 
+          ${
+            dateLabel
+              ? `
+                <p class="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                  <i class="fa-regular fa-calendar"></i> ${escapeHTML(dateLabel)}
+                </p>
+              `
+              : ""
+          }
+
+          <div class="mt-3">
+            ${statusBadge(status)}
+          </div>
         </div>
       `;
 
-      gamesGrid.appendChild(card);
+      purchasesGrid.appendChild(card);
     });
   }
 
@@ -569,9 +556,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function escapeHTML(value) {
     const div = document.createElement("div");
-
     div.textContent = value ?? "";
-
     return div.innerHTML;
   }
 
@@ -589,7 +574,6 @@ document.addEventListener("DOMContentLoaded", () => {
         editName.value = playerName.textContent.trim();
       }
 
-      // Current avatar preview
       if (currentAvatarPath) {
         setPreview(currentAvatarPath);
       }
@@ -638,67 +622,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
       clearAvatarError();
 
-      // ===================================================
-      // NAME
-      // ===================================================
-
       const name = editName ? editName.value.trim() : "";
 
       if (!name) {
         showToast("Display name is required.");
-
         return;
       }
 
       if (name.length < 2) {
         showToast("Display name must contain at least 2 characters.");
-
         return;
       }
 
       if (name.length > 50) {
         showToast("Display name is too long.");
-
         return;
       }
 
-      // ===================================================
-      // FORM DATA
-      // ===================================================
+      if (!NAME_ALLOWED_REGEX.test(name)) {
+        showToast(
+          "Display name may only contain letters (no numbers or symbols).",
+        );
+        return;
+      }
 
       const formData = new FormData();
-
       formData.append("name", name);
-
-      // ===================================================
-      // AVATAR
-      // ===================================================
 
       const file = editAvatar?.files?.[0];
 
       if (file) {
-        // Custom image
         formData.append("avatar_file", file);
-
         console.log("Uploading custom avatar:", file.name);
-      } else if (currentAvatarPath) {
-        // Predefined / current avatar
+      } else if (
+        currentAvatarPath &&
+        allowedAvatarPaths.includes(normalizeAvatarPath(currentAvatarPath))
+      ) {
         formData.append("avatar", normalizeAvatarPath(currentAvatarPath));
-
         console.log("Using avatar path:", currentAvatarPath);
+      } else {
+        console.log(
+          "Keeping existing avatar unchanged (no avatar field sent).",
+        );
       }
-
-      // ===================================================
-      // DEBUG
-      // ===================================================
 
       console.log("Saving profile...");
       console.log("Name:", name);
       console.log("File:", file ? file.name : "No new file");
-
-      // ===================================================
-      // BUTTON
-      // ===================================================
 
       const oldButton = saveProfileBtn ? saveProfileBtn.innerHTML : "";
 
@@ -710,10 +680,6 @@ document.addEventListener("DOMContentLoaded", () => {
             Saving...
           `;
       }
-
-      // ===================================================
-      // SEND REQUEST
-      // ===================================================
 
       try {
         const response = await fetch(API_URL, {
@@ -730,55 +696,11 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error(data.message || "Failed to save profile.");
         }
 
-        // =================================================
-        // UPDATED USER
-        // =================================================
-
-        const updatedUser = data.user;
-
-        // =================================================
-        // NAME
-        // =================================================
-
-        if (playerName) {
-          playerName.textContent = updatedUser.username;
-        }
-
-        if (editName) {
-          editName.value = updatedUser.username;
-        }
-
-        // =================================================
-        // AVATAR
-        // =================================================
-
-        const updatedAvatar = normalizeAvatarPath(updatedUser.avatar || "");
-
-        currentAvatarPath = updatedAvatar;
-
-        setAvatar(updatedAvatar);
-        setPreview(updatedAvatar);
-        updateNavbarAvatar(updatedAvatar);
-
-        // =================================================
-        // LEVEL
-        // =================================================
-
-        if (playerLevel) {
-          playerLevel.textContent = Number(updatedUser.level || 1);
-        }
-
-        // =================================================
-        // CLEAR FILE
-        // =================================================
-
         if (editAvatar) {
           editAvatar.value = "";
         }
 
-        // =================================================
-        // SUCCESS
-        // =================================================
+        await loadProfile();
 
         showToast("Profile saved successfully!");
 
@@ -787,7 +709,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 700);
       } catch (error) {
         console.error("Profile Save Error:", error);
-
         showToast(error.message);
       } finally {
         if (saveProfileBtn) {
@@ -795,16 +716,6 @@ document.addEventListener("DOMContentLoaded", () => {
           saveProfileBtn.innerHTML = oldButton;
         }
       }
-    });
-  }
-
-  // =========================================================
-  // VIEW ALL GAMES
-  // =========================================================
-
-  if (viewAllGames) {
-    viewAllGames.addEventListener("click", () => {
-      window.location.href = "Games.php";
     });
   }
 

@@ -68,42 +68,45 @@ if (!is_array($input)) {
 }
 
 // =========================================================
-// READ ORDER ID
+// READ PLAYER ID
 // =========================================================
 
-$orderId = isset($input['id'])
+$playerId = isset($input['id'])
     ? (int) $input['id']
     : 0;
 
 // =========================================================
-// VALIDATE ORDER ID
+// VALIDATE PLAYER ID
 // =========================================================
 
-if ($orderId <= 0) {
+if ($playerId <= 0) {
     http_response_code(400);
 
     echo json_encode([
         'success' => false,
-        'message' => 'Invalid order ID.'
+        'message' => 'Invalid player ID.'
     ]);
 
     exit;
 }
 
 // =========================================================
-// DELETE ORDER PROCESS
+// DELETE PLAYER PROCESS
 // =========================================================
 
 try {
 
     // =====================================================
-    // CHECK ORDER EXISTENCE
+    // CHECK PLAYER EXISTENCE
     // =====================================================
+
+    // Only regular users can be deleted.
 
     $checkSql = "
         SELECT id
-        FROM orders
+        FROM users
         WHERE id = :id
+        AND role = 'user'
         LIMIT 1
     ";
 
@@ -111,44 +114,45 @@ try {
         $pdo->prepare($checkSql);
 
     $checkStmt->execute([
-        ':id' => $orderId
+        ':id' => $playerId
     ]);
 
-    $order =
+    $player =
         $checkStmt->fetch(
             PDO::FETCH_ASSOC
         );
 
     // =====================================================
-    // ORDER NOT FOUND
+    // PLAYER NOT FOUND
     // =====================================================
 
-    if (!$order) {
+    if (!$player) {
 
         http_response_code(404);
 
         echo json_encode([
             'success' => false,
-            'message' => 'Order not found.'
+            'message' => 'Player not found.'
         ]);
 
         exit;
     }
 
     // =====================================================
-    // DELETE ORDER
+    // DELETE PLAYER
     // =====================================================
 
     $sql = "
-        DELETE FROM orders
+        DELETE FROM users
         WHERE id = :id
+        AND role = 'user'
     ";
 
     $stmt =
         $pdo->prepare($sql);
 
     $stmt->execute([
-        ':id' => $orderId
+        ':id' => $playerId
     ]);
 
     // =====================================================
@@ -157,8 +161,8 @@ try {
 
     echo json_encode([
         'success' => true,
-        'message' => 'Order deleted successfully.',
-        'id' => $orderId
+        'message' => 'Player deleted successfully.',
+        'id' => $playerId
     ]);
 } catch (PDOException $e) {
 
@@ -170,6 +174,6 @@ try {
 
     echo json_encode([
         'success' => false,
-        'message' => 'Failed to delete order.'
+        'message' => 'Failed to delete player.'
     ]);
 }

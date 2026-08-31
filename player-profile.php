@@ -131,7 +131,7 @@ $userId = (int) $_SESSION['user_id'];
              PROFILE HEADER
         ====================================================== -->
 
-        <section class="profile-scene neon rounded-2xl p-7 md:p-10 mt-7">
+        <section class="profile-scene neon rounded-2xl p-7 md:p-10 mt-7 relative overflow-hidden">
 
 
             <!-- =================================================
@@ -141,47 +141,30 @@ $userId = (int) $_SESSION['user_id'];
             <svg class="scene-layer" viewBox="0 0 1400 400" preserveAspectRatio="xMaxYMid slice"
                 xmlns="http://www.w3.org/2000/svg">
 
-                <!-- Moon -->
+                <!-- Dot grid -->
 
-                <circle cx="1180" cy="90" r="55" fill="#e9defb" opacity=".18" />
-
-                <circle cx="1180" cy="90" r="80" fill="#a855f7" opacity=".08" />
-
-
-                <!-- Buildings -->
-
-                <g fill="#150a2b" opacity=".65">
-
-                    <rect x="980" y="150" width="14" height="90" />
-
-                    <rect x="1000" y="120" width="14" height="120" />
-
-                    <polygon points="1000,120 1007,100 1014,120" />
-
-                    <rect x="1020" y="160" width="14" height="80" />
-
-                    <rect x="1045" y="100" width="18" height="140" />
-
-                    <polygon points="1045,100 1054,78 1063,100" />
-
-                    <rect x="1075" y="140" width="14" height="100" />
-
-                    <rect x="1100" y="115" width="16" height="125" />
-
-                    <polygon points="1100,115 1108,95 1116,115" />
-
-                    <rect x="1125" y="155" width="14" height="85" />
-
+                <g fill="#a855f7" opacity=".15">
+                    <?php
+                    for ($row = 0; $row < 10; $row++) {
+                        for ($col = 0; $col < 20; $col++) {
+                            $cx = 700 + $col * 32;
+                            $cy = 40 + $row * 32;
+                            echo "<circle cx=\"$cx\" cy=\"$cy\" r=\"1.6\" />";
+                        }
+                    }
+                    ?>
                 </g>
 
+                <!-- Controller silhouette -->
 
-                <!-- Background Mountains -->
-
-                <polygon points="0,240 200,150 380,220 560,140 760,230 950,170 1150,240 1400,190 1400,400 0,400"
-                    fill="#0d0620" opacity=".8" />
-
-                <polygon points="0,280 250,220 500,270 780,210 1050,260 1400,230 1400,400 0,400" fill="#160b30"
-                    opacity=".7" />
+                <g transform="translate(1080,140)" fill="none" stroke="#7c2cff" stroke-width="3" opacity=".35">
+                    <path d="M40 60 Q40 20 90 20 H210 Q260 20 260 60 L270 130 Q275 165 245 165 Q220 165 210 140 L200 120
+                           H100 L90 140 Q80 165 55 165 Q25 165 30 130 Z" />
+                    <circle cx="105" cy="75" r="10" />
+                    <circle cx="195" cy="75" r="10" />
+                    <line x1="60" y1="105" x2="60" y2="135" />
+                    <line x1="45" y1="120" x2="75" y2="120" />
+                </g>
 
             </svg>
 
@@ -190,7 +173,7 @@ $userId = (int) $_SESSION['user_id'];
                  PROFILE CONTENT
             ================================================== -->
 
-            <div class="relative flex flex-col md:flex-row items-center gap-8">
+            <div class="relative flex flex-col md:flex-row items-center md:items-start gap-8">
 
 
                 <!-- =================================================
@@ -217,12 +200,7 @@ $userId = (int) $_SESSION['user_id'];
 
                 <div class="flex-1 w-full">
 
-
-                    <!-- =================================================
-                         PLAYER NAME + EDIT
-                    ================================================== -->
-
-                    <div class="flex justify-between items-center gap-4 flex-wrap">
+                    <div class="flex justify-between items-start gap-4 flex-wrap">
 
                         <div>
 
@@ -230,20 +208,12 @@ $userId = (int) $_SESSION['user_id'];
                                 Loading...
                             </h1>
 
-                            <p class="text-[#a855f7] mt-3">
-
-                                Level
-
-                                <span id="playerLevel">
-                                    1
-                                </span>
-
+                            <p id="memberSince" class="text-gray-400 mt-2">
+                                &nbsp;
                             </p>
 
-                            <p class="text-gray-500 text-xs mt-1">
-
-                                Level is calculated automatically from your XP.
-
+                            <p class="text-gray-400 mt-3 max-w-md">
+                                Manage your orders, wishlist and account details.
                             </p>
 
                         </div>
@@ -254,40 +224,13 @@ $userId = (int) $_SESSION['user_id'];
                         ================================================== -->
 
                         <button id="openEditProfile" type="button"
-                            class="neon rounded-lg px-5 py-3 hover:bg-[#7c2cff]/10 transition">
+                            class="neon rounded-lg px-5 py-3 hover:bg-[#7c2cff]/10 transition shrink-0">
 
                             <i class="fa-solid fa-pen mr-2"></i>
 
                             Edit Profile
 
                         </button>
-
-                    </div>
-
-
-                    <!-- =================================================
-                         XP
-                    ================================================== -->
-
-                    <div class="flex justify-between text-sm mt-5">
-
-                        <span id="xpNote">
-                            Loading XP...
-                        </span>
-
-                        <span id="xpText">
-                            0 / 100 XP
-                        </span>
-
-                    </div>
-
-
-                    <!-- XP BAR -->
-
-                    <div class="h-3 rounded-full bg-[#211737] mt-2">
-
-                        <div id="xpBar" class="h-3 rounded-full bg-gradient-to-r from-[#7c2cff] to-[#a855f7]"
-                            style="width:0%"></div>
 
                     </div>
 
@@ -306,58 +249,51 @@ $userId = (int) $_SESSION['user_id'];
 
 
             <!-- =================================================
-                 GAMES
+                 TOTAL ORDERS
             ================================================== -->
 
             <div class="glass rounded-2xl p-7 text-center">
 
-                <i class="fa-solid fa-gamepad text-4xl text-[#a855f7]"></i>
+                <div class="w-14 h-14 mx-auto rounded-full bg-[#7c2cff]/15 grid place-items-center">
+                    <i class="fa-solid fa-bag-shopping text-2xl text-[#a855f7]"></i>
+                </div>
 
                 <p class="muted mt-4">
-                    Games Owned
+                    Total Orders
                 </p>
 
-                <b id="statGames" class="heading text-4xl">
+                <b id="statOrders" class="heading text-4xl block">
                     0
                 </b>
+
+                <a href="Orders.php" class="text-[#a855f7] hover:underline text-sm inline-flex items-center gap-1 mt-2">
+                    View all orders <i class="fa-solid fa-chevron-right text-xs"></i>
+                </a>
 
             </div>
 
 
             <!-- =================================================
-                 ACHIEVEMENTS
+                 GAMES PURCHASED
             ================================================== -->
 
             <div class="glass rounded-2xl p-7 text-center">
 
-                <i class="fa-solid fa-trophy text-4xl text-[#a855f7]"></i>
+                <div class="w-14 h-14 mx-auto rounded-full bg-[#7c2cff]/15 grid place-items-center">
+                    <i class="fa-solid fa-gamepad text-2xl text-[#a855f7]"></i>
+                </div>
 
                 <p class="muted mt-4">
-                    Achievements
+                    Games Purchased
                 </p>
 
-                <b id="statAchievements" class="heading text-4xl">
+                <b id="statGames" class="heading text-4xl block">
                     0
                 </b>
 
-            </div>
-
-
-            <!-- =================================================
-                 HOURS
-            ================================================== -->
-
-            <div class="glass rounded-2xl p-7 text-center">
-
-                <i class="fa-regular fa-clock text-4xl text-[#a855f7]"></i>
-
-                <p class="muted mt-4">
-                    Hours Played
-                </p>
-
-                <b id="statHours" class="heading text-4xl">
-                    0h
-                </b>
+                <a href="Games.php" class="text-[#a855f7] hover:underline text-sm inline-flex items-center gap-1 mt-2">
+                    View all games <i class="fa-solid fa-chevron-right text-xs"></i>
+                </a>
 
             </div>
 
@@ -368,15 +304,48 @@ $userId = (int) $_SESSION['user_id'];
 
             <div class="glass rounded-2xl p-7 text-center">
 
-                <i class="fa-regular fa-heart text-4xl text-[#a855f7]"></i>
+                <div class="w-14 h-14 mx-auto rounded-full bg-[#7c2cff]/15 grid place-items-center">
+                    <i class="fa-regular fa-heart text-2xl text-[#a855f7]"></i>
+                </div>
 
                 <p class="muted mt-4">
                     Wishlist
                 </p>
 
-                <b id="statWishlist" class="heading text-4xl">
+                <b id="statWishlist" class="heading text-4xl block">
                     0
                 </b>
+
+                <a href="Wishlist.php"
+                    class="text-[#a855f7] hover:underline text-sm inline-flex items-center gap-1 mt-2">
+                    View wishlist <i class="fa-solid fa-chevron-right text-xs"></i>
+                </a>
+
+            </div>
+
+
+            <!-- =================================================
+                 REVIEWS
+            ================================================== -->
+
+            <div class="glass rounded-2xl p-7 text-center">
+
+                <div class="w-14 h-14 mx-auto rounded-full bg-[#7c2cff]/15 grid place-items-center">
+                    <i class="fa-solid fa-star text-2xl text-[#a855f7]"></i>
+                </div>
+
+                <p class="muted mt-4">
+                    Reviews
+                </p>
+
+                <b id="statReviews" class="heading text-4xl block">
+                    0
+                </b>
+
+                <a href="Reviews.php"
+                    class="text-[#a855f7] hover:underline text-sm inline-flex items-center gap-1 mt-2">
+                    View my reviews <i class="fa-solid fa-chevron-right text-xs"></i>
+                </a>
 
             </div>
 
@@ -384,7 +353,7 @@ $userId = (int) $_SESSION['user_id'];
 
 
         <!-- =====================================================
-             RECENTLY PLAYED
+             RECENT PURCHASES
         ====================================================== -->
 
         <section class="glass rounded-2xl p-6 mt-8">
@@ -394,34 +363,32 @@ $userId = (int) $_SESSION['user_id'];
                  SECTION HEADER
             ================================================== -->
 
-            <div class="flex justify-between mb-5">
+            <div class="flex justify-between items-center mb-5">
 
                 <h2 class="heading text-2xl">
 
                     <i class="fa-solid fa-gamepad text-[#a855f7] mr-2"></i>
 
-                    Recently Played
+                    Recent Purchases
 
                 </h2>
 
 
-                <button id="viewAllGames" type="button" class="text-[#a855f7] hover:underline">
-
-                    View All &rsaquo;
-
-                </button>
+                <a href="Orders.php" class="text-[#a855f7] hover:underline text-sm inline-flex items-center gap-1">
+                    View All Orders <i class="fa-solid fa-chevron-right text-xs"></i>
+                </a>
 
             </div>
 
 
             <!-- =================================================
-                 GAMES GRID
+                 PURCHASES GRID
             ================================================== -->
 
-            <div id="gamesGrid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div id="purchasesGrid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
                 <div class="col-span-full text-center py-8 text-gray-500">
-                    Loading games...
+                    Loading purchases...
                 </div>
 
             </div>
@@ -484,46 +451,6 @@ $userId = (int) $_SESSION['user_id'];
                         class="w-full bg-[#0d0f1c] border border-[#24213a] rounded-lg px-4 py-3 outline-none focus:border-[#7c2cff]">
 
                     <p id="nameError" class="text-red-400 text-sm mt-2 hidden"></p>
-
-                </div>
-
-
-                <!-- =================================================
-                     LEVEL INFORMATION
-                ================================================== -->
-
-                <div class="rounded-xl border border-[#24213a] bg-[#0d0f1c] p-4">
-
-                    <div class="flex items-center gap-3">
-
-                        <div class="w-10 h-10 rounded-lg bg-[#7c2cff]/10 grid place-items-center">
-
-                            <i class="fa-solid fa-star text-[#a855f7]"></i>
-
-                        </div>
-
-
-                        <div>
-
-                            <p class="text-sm font-semibold text-white">
-                                Current Level
-                            </p>
-
-                            <p id="editLevelInfo" class="text-[#a855f7] font-bold">
-                                Level 1
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <p class="text-xs text-gray-500 mt-3">
-
-                        Your level is calculated automatically from your XP.
-                        You cannot change it manually.
-
-                    </p>
 
                 </div>
 
@@ -630,6 +557,8 @@ $userId = (int) $_SESSION['user_id'];
     ====================================================== -->
 
     <script src="./js/player-profile.js"></script>
+    <script src="./js/cart.js"></script>
+    <script src="./js/favorites.js"></script>
 
 
 </body>

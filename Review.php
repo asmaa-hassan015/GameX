@@ -26,44 +26,44 @@ session_start();
     ========================================================== -->
 
     <script>
-        tailwind.config = {
+    tailwind.config = {
 
-            theme: {
+        theme: {
 
-                extend: {
+            extend: {
 
-                    colors: {
+                colors: {
 
-                        gx: {
+                    gx: {
 
-                            bg: '#03040b',
-                            panel: '#090b16',
-                            line: '#24213a',
-                            purple: '#7c2cff',
-                            neon: '#a855f7'
-
-                        }
-
-                    },
-
-                    fontFamily: {
-
-                        rajdhani: ['Rajdhani', 'sans-serif'],
-                        poppins: ['Poppins', 'sans-serif']
-
-                    },
-
-                    boxShadow: {
-
-                        neon: '0 0 15px rgba(124,44,255,.35)'
+                        bg: '#03040b',
+                        panel: '#090b16',
+                        line: '#24213a',
+                        purple: '#7c2cff',
+                        neon: '#a855f7'
 
                     }
+
+                },
+
+                fontFamily: {
+
+                    rajdhani: ['Rajdhani', 'sans-serif'],
+                    poppins: ['Poppins', 'sans-serif']
+
+                },
+
+                boxShadow: {
+
+                    neon: '0 0 15px rgba(124,44,255,.35)'
 
                 }
 
             }
 
-        };
+        }
+
+    };
     </script>
 
     <!-- =========================================================
@@ -136,9 +136,7 @@ session_start();
                  WRITE REVIEW BUTTON
             ================================================== -->
 
-            <button
-                id="openWriteReview"
-                type="button"
+            <button id="openWriteReview" type="button"
                 class="neon rounded-xl px-7 py-3 text-[#a855f7] self-start hover:bg-[#7c2cff]/10 transition cursor-pointer">
 
                 <i class="fa-solid fa-pen"></i>
@@ -176,10 +174,7 @@ session_start();
                      VIEW ALL REVIEWS
                 ================================================== -->
 
-                <a
-                    href="#"
-                    id="viewAllBtn"
-                    class="text-[#a855f7] hover:underline">
+                <a href="#" id="viewAllBtn" class="text-[#a855f7] hover:underline">
                     View All Reviews →
                 </a>
 
@@ -190,9 +185,7 @@ session_start();
                  REVIEWS GRID
             ================================================== -->
 
-            <div
-                id="reviewsGrid"
-                class="grid md:grid-cols-2 gap-6">
+            <div id="reviewsGrid" class="grid md:grid-cols-2 gap-6">
             </div>
 
 
@@ -200,9 +193,7 @@ session_start();
                  PAGINATION
             ================================================== -->
 
-            <div
-                id="pagination"
-                class="flex justify-center flex-wrap gap-3 mt-9">
+            <div id="pagination" class="flex justify-center flex-wrap gap-3 mt-9">
             </div>
 
         </section>
@@ -214,8 +205,7 @@ session_start();
          WRITE REVIEW MODAL
     ========================================================== -->
 
-    <div
-        id="reviewModal"
+    <div id="reviewModal"
         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
 
         <div class="glass neon rounded-2xl w-full max-w-lg p-8 relative">
@@ -225,9 +215,7 @@ session_start();
                  CLOSE BUTTON
             ================================================== -->
 
-            <button
-                id="closeWriteReview"
-                type="button"
+            <button id="closeWriteReview" type="button"
                 class="absolute top-4 right-5 text-2xl muted hover:text-white cursor-pointer">
                 &times;
             </button>
@@ -259,15 +247,11 @@ session_start();
 
                 <div>
 
-                    <label
-                        class="block muted mb-2 text-sm"
-                        for="reviewGame">
+                    <label class="block muted mb-2 text-sm" for="reviewGame">
                         Game
                     </label>
 
-                    <select
-                        id="reviewGame"
-                        required
+                    <select id="reviewGame" required
                         class="w-full bg-[#0d0f1c] border border-[#24213a] rounded-lg px-4 py-3 outline-none focus:border-[#7c2cff]">
 
                         <option value="">
@@ -289,9 +273,7 @@ session_start();
                         Your Rating
                     </label>
 
-                    <div
-                        id="starPicker"
-                        class="star-pick text-3xl text-gray-600 flex gap-2">
+                    <div id="starPicker" class="star-pick text-3xl text-gray-600 flex gap-2">
 
                         <i class="fa-solid fa-star cursor-pointer" data-value="1"></i>
 
@@ -305,10 +287,7 @@ session_start();
 
                     </div>
 
-                    <input
-                        type="hidden"
-                        id="ratingValue"
-                        value="5">
+                    <input type="hidden" id="ratingValue" value="5">
 
                 </div>
 
@@ -319,17 +298,11 @@ session_start();
 
                 <div>
 
-                    <label
-                        class="block muted mb-2 text-sm"
-                        for="reviewText">
+                    <label class="block muted mb-2 text-sm" for="reviewText">
                         Your Review
                     </label>
 
-                    <textarea
-                        required
-                        id="reviewText"
-                        rows="4"
-                        placeholder="Tell us about your experience..."
+                    <textarea required id="reviewText" rows="4" placeholder="Tell us about your experience..."
                         class="w-full bg-[#0d0f1c] border border-[#24213a] rounded-lg px-4 py-3 outline-none focus:border-[#7c2cff] resize-none"></textarea>
 
                 </div>
@@ -339,9 +312,7 @@ session_start();
                      FORM MESSAGE
                 ================================================== -->
 
-                <p
-                    id="reviewMessage"
-                    class="hidden text-sm">
+                <p id="reviewMessage" class="hidden text-sm">
                 </p>
 
 
@@ -349,9 +320,7 @@ session_start();
                      SUBMIT BUTTON
                 ================================================== -->
 
-                <button
-                    type="submit"
-                    id="submitReviewBtn"
+                <button type="submit" id="submitReviewBtn"
                     class="purple w-full rounded-xl px-5 py-3 font-semibold shadow-neon cursor-pointer">
                     Submit Review
                 </button>
@@ -367,8 +336,7 @@ session_start();
          REVIEW DETAILS MODAL
     ========================================================== -->
 
-    <div
-        id="detailsModal"
+    <div id="detailsModal"
         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
 
         <div class="glass neon rounded-2xl w-full max-w-lg p-8 relative">
@@ -378,9 +346,7 @@ session_start();
                  CLOSE DETAILS BUTTON
             ================================================== -->
 
-            <button
-                id="closeDetails"
-                type="button"
+            <button id="closeDetails" type="button"
                 class="absolute top-4 right-5 text-2xl muted hover:text-white cursor-pointer">
                 &times;
             </button>
@@ -400,14 +366,9 @@ session_start();
                 <div
                     class="h-14 w-14 rounded-full border border-[#7c2cff] bg-[#17121f] grid place-items-center overflow-hidden">
 
-                    <img
-                        id="detailsAvatar"
-                        class="hidden h-full w-full object-cover"
-                        alt="Avatar">
+                    <img id="detailsAvatar" class="hidden h-full w-full object-cover" alt="Avatar">
 
-                    <i
-                        id="detailsAvatarIcon"
-                        class="fa-solid fa-user text-xl text-[#a855f7]"></i>
+                    <i id="detailsAvatarIcon" class="fa-solid fa-user text-xl text-[#a855f7]"></i>
 
                 </div>
 
@@ -418,13 +379,9 @@ session_start();
 
                 <div>
 
-                    <h3
-                        id="detailsName"
-                        class="text-xl font-bold"></h3>
+                    <h3 id="detailsName" class="text-xl font-bold"></h3>
 
-                    <div
-                        id="detailsStars"
-                        class="text-yellow-400 text-sm mt-1"></div>
+                    <div id="detailsStars" class="text-yellow-400 text-sm mt-1"></div>
 
                 </div>
 
@@ -435,27 +392,21 @@ session_start();
                  GAME
             ================================================== -->
 
-            <p
-                id="detailsGame"
-                class="text-[#a855f7] text-sm mb-2"></p>
+            <p id="detailsGame" class="text-[#a855f7] text-sm mb-2"></p>
 
 
             <!-- =================================================
                  DATE
             ================================================== -->
 
-            <p
-                id="detailsDate"
-                class="muted text-sm mb-4"></p>
+            <p id="detailsDate" class="muted text-sm mb-4"></p>
 
 
             <!-- =================================================
                  REVIEW CONTENT
             ================================================== -->
 
-            <p
-                id="detailsText"
-                class="text-gray-300 leading-7"></p>
+            <p id="detailsText" class="text-gray-300 leading-7"></p>
 
         </div>
 
@@ -467,6 +418,8 @@ session_start();
     ========================================================== -->
 
     <script src="./js/Review.js"></script>
+    <script src="./js/cart.js"></script>
+    <script src="./js/favorites.js"></script>
 
 </body>
 

@@ -447,7 +447,7 @@ if ($method === 'POST') {
                 ?,
                 ?,
                 ?,
-                'pending'
+                'approved'
             )
 
         ");
@@ -475,7 +475,7 @@ if ($method === 'POST') {
 
             true,
 
-            'Review submitted successfully and is waiting for approval.',
+            'Review submitted successfully.',
 
             [
 
@@ -506,7 +506,7 @@ if ($method === 'POST') {
                     $user['avatar'],
 
                     'status' =>
-                    'pending'
+                    'approved'
 
                 ]
 

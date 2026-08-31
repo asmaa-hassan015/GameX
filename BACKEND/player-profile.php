@@ -1,619 +1,348 @@
 <?php
 
+// =========================================================
+// GAME X - PLAYER PROFILE API
+// Place this file at: BACKEND/player-profile.php
+// =========================================================
+
 session_start();
 
 header('Content-Type: application/json; charset=utf-8');
 
-require_once __DIR__ . '/../config/db.php';
-
-
 // =========================================================
-// HELPER
+// FORCE EVERY ERROR TO COME BACK AS JSON
+// (never let PHP print raw HTML "Warning:" / "Fatal error:")
 // =========================================================
 
-function responseJson(
-    bool $success,
-    string $message = '',
-    array $extra = [],
-    int $statusCode = 200
-): void {
+ini_set('display_errors', '0');
+error_reporting(E_ALL);
 
-    http_response_code($statusCode);
+set_error_handler(function ($severity, $message, $file, $line) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'PHP error: ' . $message,
+        'file' => $file,
+        'line' => $line,
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+});
 
-    echo json_encode(
-        array_merge(
-            [
-                'success' => $success,
-                'message' => $message
+register_shutdown_function(function () {
+    $error = error_get_last();
+
+    if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+        if (!headers_sent()) {
+            http_response_code(500);
+            header('Content-Type: application/json; charset=utf-8');
+        }
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'Fatal PHP error: ' . $error['message'],
+            'file' => $error['file'],
+            'line' => $error['line'],
+        ], JSON_UNESCAPED_UNICODE);
+    }
+});
+
+// =========================================================
+// LOCATE db.php AUTOMATICALLY
+// =========================================================
+
+$dbCandidates = [
+    __DIR__ . '/../db.php',
+    __DIR__ . '/db.php',
+    __DIR__ . '/../BACKEND/db.php',
+    __DIR__ . '/../config/db.php',
+    __DIR__ . '/../../db.php',
+];
+
+$dbPath = null;
+
+foreach ($dbCandidates as $candidate) {
+    if (file_exists($candidate)) {
+        $dbPath = $candidate;
+        break;
+    }
+}
+
+if ($dbPath === null) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'db.php not found. Checked: ' . implode(', ', $dbCandidates)
+            . '. Edit the $dbCandidates array in this file to add the real path.',
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+require_once $dbPath;
+
+// =========================================================
+// AUTH CHECK
+// =========================================================
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode([
+        'success' => false,
+        'message' => 'You must be logged in.',
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+$userId = (int) $_SESSION['user_id'];
+$method = $_SERVER['REQUEST_METHOD'];
+
+// =========================================================
+// PREDEFINED AVATARS WHITELIST
+// Mirrors allowedAvatarPaths in player-profile.js
+// =========================================================
+
+$allowedAvatars = [
+    'src/Images/avatars/blaze.png',
+    'src/Images/avatars/sentinel.png',
+    'src/Images/avatars/raven.png',
+    'src/Images/avatars/phantom.png',
+];
+
+// Folder where uploaded custom avatars are stored.
+// Adjust to match your real project structure.
+$uploadDir = __DIR__ . '/../uploads/avatars/';
+$uploadUrlPrefix = 'uploads/avatars/';
+
+// =========================================================
+// GET -> LOAD PROFILE
+// =========================================================
+
+if ($method === 'GET') {
+    try {
+        // -----------------------------------------------
+        // USER
+        // -----------------------------------------------
+
+        $stmt = $pdo->prepare(
+            'SELECT id, username, avatar, created_at
+             FROM users
+             WHERE id = ?
+             LIMIT 1'
+        );
+        $stmt->execute([$userId]);
+        $user = $stmt->fetch();
+
+        if (!$user) {
+            http_response_code(404);
+            echo json_encode([
+                'success' => false,
+                'message' => 'User not found.',
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $memberSince = '';
+        if (!empty($user['created_at'])) {
+            $memberSince = date('F Y', strtotime($user['created_at']));
+        }
+
+        // -----------------------------------------------
+        // STATS
+        // -----------------------------------------------
+
+        // Total orders (all statuses)
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM orders WHERE user_id = ?');
+        $stmt->execute([$userId]);
+        $totalOrders = (int) $stmt->fetchColumn();
+
+        // Distinct games purchased through completed orders
+        $stmt = $pdo->prepare(
+            "SELECT COUNT(DISTINCT oi.game_id)
+             FROM order_items oi
+             JOIN orders o ON o.id = oi.order_id
+             WHERE o.user_id = ? AND o.status = 'completed'"
+        );
+        $stmt->execute([$userId]);
+        $gamesPurchased = (int) $stmt->fetchColumn();
+
+        // Wishlist
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM wishlist WHERE user_id = ?');
+        $stmt->execute([$userId]);
+        $wishlistCount = (int) $stmt->fetchColumn();
+
+        // Reviews written by the user
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM reviews WHERE user_id = ?');
+        $stmt->execute([$userId]);
+        $reviewsCount = (int) $stmt->fetchColumn();
+
+        // -----------------------------------------------
+        // RECENT PURCHASES (last 4 order items, most recent order first)
+        // -----------------------------------------------
+
+        $stmt = $pdo->prepare(
+            "SELECT
+                oi.game_title AS title,
+                g.image AS image,
+                oi.price AS price,
+                o.status AS status,
+                o.created_at AS purchasedAt
+             FROM order_items oi
+             JOIN orders o ON o.id = oi.order_id
+             LEFT JOIN games g ON g.id = oi.game_id
+             WHERE o.user_id = ?
+             ORDER BY o.created_at DESC
+             LIMIT 4"
+        );
+        $stmt->execute([$userId]);
+        $recentPurchases = $stmt->fetchAll();
+
+        // -----------------------------------------------
+        // RESPONSE
+        // -----------------------------------------------
+
+        echo json_encode([
+            'success' => true,
+            'user' => [
+                'id' => (int) $user['id'],
+                'username' => $user['username'],
+                'avatar' => $user['avatar'],
+                'memberSince' => $memberSince,
             ],
-            $extra
-        ),
-        JSON_UNESCAPED_UNICODE
-    );
+            'stats' => [
+                'orders' => $totalOrders,
+                'games' => $gamesPurchased,
+                'wishlist' => $wishlistCount,
+                'reviews' => $reviewsCount,
+            ],
+            'recentPurchases' => $recentPurchases,
+        ], JSON_UNESCAPED_UNICODE);
+    } catch (Throwable $e) {
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Failed to load profile.',
+            'error' => $e->getMessage(),
+        ], JSON_UNESCAPED_UNICODE);
+    }
 
     exit;
 }
 
-
 // =========================================================
-// CHECK LOGIN
-// =========================================================
-
-if (!isset($_SESSION['user_id'])) {
-
-    responseJson(
-        false,
-        'User is not logged in.',
-        [],
-        401
-    );
-}
-
-$userId = (int) $_SESSION['user_id'];
-
-
-// =========================================================
-// REQUEST METHOD
-// =========================================================
-
-$method = $_SERVER['REQUEST_METHOD'];
-
-
-// =========================================================
-// ALLOWED PREDEFINED AVATARS
-// =========================================================
-
-$allowedAvatars = [
-
-    'src/Images/avatars/blaze.png',
-
-    'src/Images/avatars/sentinel.png',
-
-    'src/Images/avatars/raven.png',
-
-    'src/Images/avatars/phantom.png'
-
-];
-
-
-// =========================================================
-// GET PROFILE
-// =========================================================
-
-if ($method === 'GET') {
-
-    try {
-
-        // =====================================================
-        // GET USER
-        // =====================================================
-
-        $stmt = $pdo->prepare("
-            SELECT
-                id,
-                username,
-                email,
-                avatar
-            FROM users
-            WHERE id = ?
-            LIMIT 1
-        ");
-
-        $stmt->execute([$userId]);
-
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-
-        // =====================================================
-        // CHECK USER
-        // =====================================================
-
-        if (!$user) {
-
-            responseJson(
-                false,
-                'User not found.',
-                [],
-                404
-            );
-        }
-
-
-        // =====================================================
-        // USER DATA
-        // =====================================================
-
-        $userData = [
-
-            'id' => (int) $user['id'],
-
-            'username' =>
-            $user['username'] ?? 'Player',
-
-            'email' =>
-            $user['email'] ?? '',
-
-            'avatar' =>
-            $user['avatar'] ?? null,
-
-            'level' => 1
-
-        ];
-
-
-        // =====================================================
-        // STATS
-        // =====================================================
-
-        $stats = [
-
-            'games' => 0,
-
-            'achievements' => 0,
-
-            'hours' => 0,
-
-            'wishlist' => 0,
-
-            'currentXP' => 0,
-
-            'requiredXP' => 100
-
-        ];
-
-
-        // =====================================================
-        // WISHLIST COUNT
-        // =====================================================
-
-        try {
-
-            $wishlistStmt = $pdo->prepare("
-                SELECT COUNT(*)
-                FROM wishlist
-                WHERE user_id = ?
-            ");
-
-            $wishlistStmt->execute([$userId]);
-
-            $stats['wishlist'] =
-                (int) $wishlistStmt->fetchColumn();
-        } catch (PDOException $e) {
-
-            $stats['wishlist'] = 0;
-        }
-
-
-        // =====================================================
-        // RESPONSE
-        // =====================================================
-
-        responseJson(
-            true,
-            'Profile loaded successfully.',
-            [
-
-                'user' => $userData,
-
-                'stats' => $stats,
-
-                'recentlyPlayed' => []
-
-            ]
-        );
-    } catch (PDOException $e) {
-
-        error_log(
-            'PLAYER PROFILE GET ERROR: ' .
-                $e->getMessage()
-        );
-
-        responseJson(
-            false,
-            'Failed to load profile.',
-            [],
-            500
-        );
-    }
-}
-
-
-// =========================================================
-// UPDATE PROFILE
+// POST -> UPDATE PROFILE (name + avatar)
 // =========================================================
 
 if ($method === 'POST') {
-
     try {
-
-        // =====================================================
+        // -----------------------------------------------
         // NAME
-        // =====================================================
+        // -----------------------------------------------
 
-        $name = trim(
-            $_POST['name'] ?? ''
-        );
-
-
-        // =====================================================
-        // NAME VALIDATION
-        // =====================================================
+        $name = trim($_POST['name'] ?? '');
 
         if ($name === '') {
-
-            responseJson(
-                false,
-                'Display name is required.',
-                [],
-                400
-            );
+            throw new Exception('Display name is required.');
         }
 
-        if (mb_strlen($name) < 2) {
-
-            responseJson(
-                false,
-                'Display name must contain at least 2 characters.',
-                [],
-                400
-            );
+        if (mb_strlen($name) < 2 || mb_strlen($name) > 50) {
+            throw new Exception('Display name must be between 2 and 50 characters.');
         }
 
-        if (mb_strlen($name) > 50) {
-
-            responseJson(
-                false,
-                'Display name is too long.',
-                [],
-                400
-            );
+        if (!preg_match('/^\p{L}+(?:\s\p{L}+)*$/u', $name)) {
+            throw new Exception('Display name may only contain letters.');
         }
 
+        // -----------------------------------------------
+        // AVATAR
+        // -----------------------------------------------
 
-        // =====================================================
-        // GET CURRENT USER
-        // =====================================================
+        $avatarToSave = null; // null = keep existing avatar unchanged
 
-        $stmt = $pdo->prepare("
-            SELECT
-                id,
-                username,
-                email,
-                avatar
-            FROM users
-            WHERE id = ?
-            LIMIT 1
-        ");
-
-        $stmt->execute([$userId]);
-
-        $currentUser =
-            $stmt->fetch(PDO::FETCH_ASSOC);
-
-
-        // =====================================================
-        // CHECK USER
-        // =====================================================
-
-        if (!$currentUser) {
-
-            responseJson(
-                false,
-                'User not found.',
-                [],
-                404
-            );
-        }
-
-
-        // =====================================================
-        // CURRENT AVATAR
-        // =====================================================
-
-        $currentAvatar =
-            $currentUser['avatar'] ?? null;
-
-        $newAvatar =
-            $currentAvatar;
-
-
-        // =====================================================
-        // CUSTOM UPLOADED AVATAR
-        // =====================================================
-
-        if (
-            isset($_FILES['avatar_file']) &&
-            $_FILES['avatar_file']['error'] !== UPLOAD_ERR_NO_FILE
-        ) {
-
+        if (!empty($_FILES['avatar_file']['name'])) {
             $file = $_FILES['avatar_file'];
 
-
-            // =================================================
-            // UPLOAD ERROR
-            // =================================================
-
             if ($file['error'] !== UPLOAD_ERR_OK) {
-
-                responseJson(
-                    false,
-                    'Failed to upload avatar.',
-                    [],
-                    400
-                );
+                throw new Exception('Avatar upload failed.');
             }
-
-
-            // =================================================
-            // MAX SIZE 5MB
-            // =================================================
 
             $maxSize = 5 * 1024 * 1024;
-
             if ($file['size'] > $maxSize) {
-
-                responseJson(
-                    false,
-                    'Avatar must be smaller than 5MB.',
-                    [],
-                    400
-                );
+                throw new Exception('Avatar must be smaller than 5MB.');
             }
 
-
-            // =================================================
-            // CHECK MIME TYPE
-            // =================================================
-
-            $finfo = new finfo(FILEINFO_MIME_TYPE);
-
-            $mimeType =
-                $finfo->file($file['tmp_name']);
-
-            $allowedMimeTypes = [
-
+            $allowedTypes = [
                 'image/jpeg' => 'jpg',
-
                 'image/png' => 'png',
-
-                'image/webp' => 'webp'
-
+                'image/webp' => 'webp',
             ];
 
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime = finfo_file($finfo, $file['tmp_name']);
+            finfo_close($finfo);
 
-            if (
-                !isset(
-                    $allowedMimeTypes[$mimeType]
-                )
-            ) {
-
-                responseJson(
-                    false,
-                    'Only JPG, PNG or WEBP images are allowed.',
-                    [],
-                    400
-                );
+            if (!isset($allowedTypes[$mime])) {
+                throw new Exception('Only JPG, PNG or WEBP images are allowed.');
             }
 
-
-            // =================================================
-            // CREATE UPLOAD DIRECTORY
-            // =================================================
-
-            $uploadDirectory =
-                __DIR__ . '/../uploads/avatars/';
-
-
-            if (!is_dir($uploadDirectory)) {
-
-                if (
-                    !mkdir(
-                        $uploadDirectory,
-                        0755,
-                        true
-                    )
-                ) {
-
-                    responseJson(
-                        false,
-                        'Could not create avatar upload directory.',
-                        [],
-                        500
-                    );
-                }
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
             }
 
+            $ext = $allowedTypes[$mime];
+            $filename = 'user_' . $userId . '_' . time() . '.' . $ext;
+            $destination = $uploadDir . $filename;
 
-            // =================================================
-            // GENERATE UNIQUE FILE NAME
-            // =================================================
-
-            $extension =
-                $allowedMimeTypes[$mimeType];
-
-            $randomName =
-                bin2hex(random_bytes(8));
-
-            $fileName =
-                'user_' .
-                $userId .
-                '_' .
-                time() .
-                '_' .
-                $randomName .
-                '.' .
-                $extension;
-
-            $destination =
-                $uploadDirectory .
-                $fileName;
-
-
-            // =================================================
-            // MOVE FILE
-            // =================================================
-
-            if (
-                !move_uploaded_file(
-                    $file['tmp_name'],
-                    $destination
-                )
-            ) {
-
-                responseJson(
-                    false,
-                    'Could not save uploaded avatar.',
-                    [],
-                    500
-                );
+            if (!move_uploaded_file($file['tmp_name'], $destination)) {
+                throw new Exception('Could not save the uploaded avatar.');
             }
 
+            $avatarToSave = $uploadUrlPrefix . $filename;
+        } elseif (isset($_POST['avatar']) && $_POST['avatar'] !== '') {
+            $candidate = trim($_POST['avatar']);
 
-            // =================================================
-            // DATABASE PATH
-            // =================================================
+            if (!in_array($candidate, $allowedAvatars, true)) {
+                throw new Exception('Invalid avatar selection.');
+            }
 
-            $newAvatar =
-                'uploads/avatars/' .
-                $fileName;
+            $avatarToSave = $candidate;
         }
 
+        // -----------------------------------------------
+        // UPDATE
+        // -----------------------------------------------
 
-        // =====================================================
-        // PREDEFINED AVATAR
-        // =====================================================
-
-        elseif (isset($_POST['avatar'])) {
-
-            $selectedAvatar =
-                trim($_POST['avatar']);
-
-
-            if ($selectedAvatar !== '') {
-
-                if (
-                    !in_array(
-                        $selectedAvatar,
-                        $allowedAvatars,
-                        true
-                    )
-                ) {
-
-                    responseJson(
-                        false,
-                        'Invalid avatar selected.',
-                        [],
-                        400
-                    );
-                }
-
-
-                $newAvatar =
-                    $selectedAvatar;
-            }
+        if ($avatarToSave !== null) {
+            $stmt = $pdo->prepare(
+                'UPDATE users SET username = ?, avatar = ? WHERE id = ?'
+            );
+            $stmt->execute([$name, $avatarToSave, $userId]);
+        } else {
+            $stmt = $pdo->prepare(
+                'UPDATE users SET username = ? WHERE id = ?'
+            );
+            $stmt->execute([$name, $userId]);
         }
 
-
-        // =====================================================
-        // UPDATE DATABASE
-        // =====================================================
-
-        $stmt = $pdo->prepare("
-            UPDATE users
-            SET
-                username = ?,
-                avatar = ?
-            WHERE id = ?
-        ");
-
-        $stmt->execute([
-
-            $name,
-
-            $newAvatar,
-
-            $userId
-
-        ]);
-
-
-        // =====================================================
-        // UPDATE SESSION
-        // =====================================================
-
-        $_SESSION['username'] =
-            $name;
-
-        $_SESSION['avatar'] =
-            $newAvatar;
-
-
-        // =====================================================
-        // RESPONSE
-        // =====================================================
-
-        responseJson(
-            true,
-            'Profile updated successfully.',
-            [
-
-                'user' => [
-
-                    'id' =>
-                    $userId,
-
-                    'username' =>
-                    $name,
-
-                    'email' =>
-                    $currentUser['email'] ?? '',
-
-                    'avatar' =>
-                    $newAvatar,
-
-                    'level' => 1
-
-                ]
-
-            ]
-        );
-    } catch (PDOException $e) {
-
-        error_log(
-            'PLAYER PROFILE POST DATABASE ERROR: ' .
-                $e->getMessage()
-        );
-
-        responseJson(
-            false,
-            'Database update failed.',
-            [],
-            500
-        );
+        echo json_encode([
+            'success' => true,
+            'message' => 'Profile updated successfully.',
+        ], JSON_UNESCAPED_UNICODE);
     } catch (Throwable $e) {
-
-        error_log(
-            'PLAYER PROFILE POST GENERAL ERROR: ' .
-                $e->getMessage()
-        );
-
-        responseJson(
-            false,
-            'Something went wrong.',
-            [],
-            500
-        );
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => $e->getMessage(),
+        ], JSON_UNESCAPED_UNICODE);
     }
+
+    exit;
 }
 
-
 // =========================================================
-// INVALID METHOD
+// METHOD NOT ALLOWED
 // =========================================================
 
-responseJson(
-    false,
-    'Method not allowed.',
-    [],
-    405
-);
+http_response_code(405);
+echo json_encode([
+    'success' => false,
+    'message' => 'Method not allowed.',
+], JSON_UNESCAPED_UNICODE);

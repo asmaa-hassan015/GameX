@@ -420,6 +420,8 @@ session_start();
     <script src="./js/main.js"></script>
 
     <script src="./js/top-players.js"></script>
+    <script src="./js/cart.js"></script>
+    <script src="./js/favorites.js"></script>
 
 
 </body>
